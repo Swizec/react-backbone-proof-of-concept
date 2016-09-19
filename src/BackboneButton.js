@@ -16,6 +16,7 @@ class BackboneButton extends Backbone.View {
         }
 
         this.template = Handlebars.compile('<button>Clicked {{N}} times</button>');
+        this.listenTo(this.model, 'change', this.render);
     }
 
     render() {
@@ -23,7 +24,9 @@ class BackboneButton extends Backbone.View {
     }
 
     buttonClick() {
-        console.log('hai');
+        const N = this.model.get('N');
+
+        this.model.set({N: N+1});
     }
 }
 

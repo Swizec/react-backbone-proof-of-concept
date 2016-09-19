@@ -20,9 +20,29 @@ class ButtonWrapper extends Component {
     }
 
     render() {
-        return <div className="button-anchor" ref="anchor" />
+        return (
+            <div>
+                <p>Backbone Button:</p>
+                <div className="button-anchor" ref="anchor" />
+            </div>
+        );
     }
 }
+
+class ReactButton extends Component {
+    buttonClicked() {
+        console.log("+10");
+    }
+
+    render() {
+        return (
+            <div>
+                <p>React Button:</p>
+                <button onClick={this.buttonClicked.bind(this)}>Jump click count +10</button>
+            </div>
+        );
+    }
+};
 
 class App extends Component {
     render() {
@@ -36,6 +56,8 @@ class App extends Component {
                     To get started, edit <code>src/App.js</code> and save to reload.
                 </p>
                 <ButtonWrapper />
+                <br/><br/>
+                <ReactButton />
             </div>
         );
     }
