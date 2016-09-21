@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import mobx, { observable, action } from 'mobx';
+import mobx, { observable, action, autorun } from 'mobx';
 import { observer } from 'mobx-react';
 
 import BackboneButton from './BackboneButton';
@@ -19,6 +19,8 @@ class ButtonWrapper extends Component {
         super(props);
 
         this._init();
+
+        autorun(this._render.bind(this));
     }
 
     _init() {
@@ -30,9 +32,8 @@ class ButtonWrapper extends Component {
         }));
     }
 
-    componentDidUpdate() { this._render(); }
+    componentDidUpdate() { console.log('did updated'); this._render(); }
     componentDidMount() { this._render(); }
-    componentWillReact() { this._render(); }
 
     _render() {
         this._cleanup();
@@ -47,8 +48,6 @@ class ButtonWrapper extends Component {
     }
 
     render() {
-        this.props.store.N; // MobX laziness is too smart
-
         return (
             <div>
                 <p>Backbone Button:</p>
