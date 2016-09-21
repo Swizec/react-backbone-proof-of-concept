@@ -2,18 +2,19 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import mobx, { observable, action, autorun } from 'mobx';
-import { observer } from 'mobx-react';
+import { observer, Provider, inject } from 'mobx-react';
+import DevTools from 'mobx-react-devtools';
 
 import BackboneButton from './BackboneButton';
 
 mobx.useStrict(true);
 
-class Counter {
+class CounterStore {
     @observable N = 0
 }
 
 
-@observer
+@inject('counterStore') @observer
 class ButtonWrapper extends Component {
     constructor(props) {
         super(props);
@@ -25,14 +26,14 @@ class ButtonWrapper extends Component {
 
     _init() {
         this.button = new BackboneButton({
-            N: this.props.store.N
+            N: this.props.counterStore.N
         });
         this.button.model.on('change:N', action('inc-counter', (_, N) => {
-            this.props.store.N = N;
+            this.props.counterStore.N = N;
         }));
     }
 
-    componentDidUpdate() { console.log('did updated'); this._render(); }
+    componentDidUpdate() { this._render(); }
     componentDidMount() { this._render(); }
 
     _render() {
@@ -57,9 +58,10 @@ class ButtonWrapper extends Component {
     }
 }
 
+@inject('counterStore')
 class ReactButton extends Component {
     buttonClicked() {
-        this.props.store.N += 10;
+        this.props.counterStore.N += 10;
     }
 
     render() {
@@ -72,29 +74,37 @@ class ReactButton extends Component {
     }
 };
 
-const CurrentCount = observer(({ store }) => (
-    <p>Current count in store: {store.N}</p>
-));
+@inject('counterStore') @observer
+class CurrentCount extends Component {
+    render() {
+        const { N } = this.props.counterStore;
+        return (<p>Current count in counterStore: {N}</p>)
+    }
+}
 
 class App extends Component {
-    counterStore = new Counter()
+    counterStore = new CounterStore()
 
     render() {
 
         return (
-            <div className="App">
-                <div className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <h2>Welcome to React</h2>
+            <Provider counterStore={this.counterStore}>
+                <div className="App">
+                    <DevTools />
+                    <div className="App-header">
+                        <img src={logo} className="App-logo" alt="logo" />
+                        <h2>Welcome to React</h2>
+                    </div>
+                    <p className="App-intro">
+                        To get started, edit <code>src/App.js</code> and save to reload.
+                    </p>
+
+                    <CurrentCount />
+                    <ButtonWrapper />
+                    <br/><br/>
+                    <ReactButton />
                 </div>
-                <p className="App-intro">
-                    To get started, edit <code>src/App.js</code> and save to reload.
-                </p>
-                <CurrentCount store={this.counterStore} />
-                <ButtonWrapper store={this.counterStore} />
-                <br/><br/>
-                <ReactButton store={this.counterStore} />
-            </div>
+            </Provider>
         );
     }
 }
