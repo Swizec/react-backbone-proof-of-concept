@@ -1,22 +1,46 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { observable, extendObservable } from 'mobx';
+import { observer } from 'mobx-react';
 
 import BackboneButton from './BackboneButton';
 
+class Counter {
+    @observable N = 0
+}
+
+
+@observer
 class ButtonWrapper extends Component {
-    button = new BackboneButton();
+    constructor(props) {
+        super(props);
 
-    componentDidUpdate() {
-        this._render();
+        this._init();
     }
 
-    componentDidMount() {
-        this._render();
+    _init() {
+        this.button = new BackboneButton({
+            N: this.props.store.N
+        });
+        this.button.model.on('change:N', (_, N) => {
+            this.props.store.N = N;
+        });
     }
+
+    componentDidUpdate() { this._render(); }
+    componentDidMount() { this._render(); }
 
     _render() {
+        this._cleanup();
+        this._init();
         this.button.setElement(this.refs.anchor).render();
+    }
+
+    componentWillUnmount() { this._cleanup(); }
+
+    _cleanup() {
+        this.button.undelegateEvents();
     }
 
     render() {
@@ -31,7 +55,7 @@ class ButtonWrapper extends Component {
 
 class ReactButton extends Component {
     buttonClicked() {
-        console.log("+10");
+        this.props.store.N += 10;
     }
 
     render() {
@@ -45,7 +69,10 @@ class ReactButton extends Component {
 };
 
 class App extends Component {
+    counterStore = new Counter()
+
     render() {
+
         return (
             <div className="App">
                 <div className="App-header">
@@ -55,9 +82,9 @@ class App extends Component {
                 <p className="App-intro">
                     To get started, edit <code>src/App.js</code> and save to reload.
                 </p>
-                <ButtonWrapper />
+                <ButtonWrapper store={this.counterStore} />
                 <br/><br/>
-                <ReactButton />
+                <ReactButton store={this.counterStore} />
             </div>
         );
     }

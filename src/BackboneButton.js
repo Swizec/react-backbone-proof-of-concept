@@ -4,11 +4,11 @@ import Handlebars from 'handlebars';
 
 
 class BackboneButton extends Backbone.View {
-    constructor() {
+    constructor(options) {
         super();
 
         this.model = new Backbone.Model({
-            N: 0
+            N: options.N
         });
 
         this.events = {
