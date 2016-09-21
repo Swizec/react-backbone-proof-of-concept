@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { observable, extendObservable } from 'mobx';
+import mobx, { observable, action } from 'mobx';
 import { observer } from 'mobx-react';
 
 import BackboneButton from './BackboneButton';
+
+mobx.useStrict(true);
 
 class Counter {
     @observable N = 0
@@ -23,13 +25,14 @@ class ButtonWrapper extends Component {
         this.button = new BackboneButton({
             N: this.props.store.N
         });
-        this.button.model.on('change:N', (_, N) => {
+        this.button.model.on('change:N', action('inc-counter', (_, N) => {
             this.props.store.N = N;
-        });
+        }));
     }
 
     componentDidUpdate() { this._render(); }
     componentDidMount() { this._render(); }
+    componentWillReact() { this._render(); }
 
     _render() {
         this._cleanup();
@@ -44,6 +47,8 @@ class ButtonWrapper extends Component {
     }
 
     render() {
+        this.props.store.N; // MobX laziness is too smart
+
         return (
             <div>
                 <p>Backbone Button:</p>
@@ -62,11 +67,15 @@ class ReactButton extends Component {
         return (
             <div>
                 <p>React Button:</p>
-                <button onClick={this.buttonClicked.bind(this)}>Jump click count +10</button>
+                <button onClick={action('inc-counter', this.buttonClicked.bind(this))}>Jump click count +10</button>
             </div>
         );
     }
 };
+
+const CurrentCount = observer(({ store }) => (
+    <p>Current count in store: {store.N}</p>
+));
 
 class App extends Component {
     counterStore = new Counter()
@@ -82,6 +91,7 @@ class App extends Component {
                 <p className="App-intro">
                     To get started, edit <code>src/App.js</code> and save to reload.
                 </p>
+                <CurrentCount store={this.counterStore} />
                 <ButtonWrapper store={this.counterStore} />
                 <br/><br/>
                 <ReactButton store={this.counterStore} />
