@@ -2,6 +2,7 @@
   "name": "react-backbone-proof-of-concept",
   "version": "0.0.1",
   "private": true,
+    "homepage": "https://swizec.github.io/react-backbone-proof-of-concept",
   "devDependencies": {
     "autoprefixer": "6.4.1",
     "babel-core": "6.14.0",
