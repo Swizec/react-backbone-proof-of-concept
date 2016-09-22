@@ -19,8 +19,6 @@ class ButtonWrapper extends Component {
     constructor(props) {
         super(props);
 
-        this._init();
-
         autorun(this._render.bind(this));
     }
 
@@ -81,7 +79,7 @@ class CurrentCount extends Component {
         return (<p>Current count in counterStore: {N}</p>)
     }
 }
-
+7
 class App extends Component {
     counterStore = new CounterStore()
 
