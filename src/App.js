@@ -43,7 +43,9 @@ class ButtonWrapper extends Component {
     componentWillUnmount() { this._cleanup(); }
 
     _cleanup() {
-        this.button.undelegateEvents();
+        if (this.button) {
+            this.button.undelegateEvents();
+        }
     }
 
     render() {
