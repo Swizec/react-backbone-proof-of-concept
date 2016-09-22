@@ -11,7 +11,8 @@ module.exports = {
     require.resolve('babel-preset-stage-1')
   ],
   plugins: [
-    // class { handleClick = () => { } }
+      // class { handleClick = () => { } }
+      require.resolve('babel-plugin-transform-decorators-legacy'),
     require.resolve('babel-plugin-transform-class-properties'),
     // { ...todo, completed: true }
     require.resolve('babel-plugin-transform-object-rest-spread'),
