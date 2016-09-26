@@ -11,6 +11,14 @@ mobx.useStrict(true);
 
 class CounterStore {
     @observable N = 0
+
+    @action('set') set(N) {
+        this.N = N;
+    }
+
+    @action('inc') inc(delta) {
+        this.N += delta;
+    }
 }
 
 
@@ -26,9 +34,9 @@ class ButtonWrapper extends Component {
         this.button = new BackboneButton({
             N: this.props.counterStore.N
         });
-        this.button.model.on('change:N', action('inc-counter', (_, N) => {
-            this.props.counterStore.N = N;
-        }));
+        this.button.model.on('change:N', (_, N) => {
+            this.props.counterStore.set(N);
+        });
     }
 
     componentDidUpdate() { this._render(); }
@@ -61,14 +69,14 @@ class ButtonWrapper extends Component {
 @inject('counterStore')
 class ReactButton extends Component {
     buttonClicked() {
-        this.props.counterStore.N += 10;
+        this.props.counterStore.inc(10);
     }
 
     render() {
         return (
             <div>
                 <p>React Button:</p>
-                <button onClick={action('inc-counter', this.buttonClicked.bind(this))}>Jump click count +10</button>
+                <button onClick={this.buttonClicked.bind(this)}>Jump click count +10</button>
             </div>
         );
     }
